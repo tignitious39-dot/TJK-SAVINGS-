@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Loan Application</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+      color: #222;
+    }
+
+    header {
+      background: #0b5d3b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin: 7px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 7px;
+      background: #0b5d3b;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .back {
+      background: #555;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .info {
+      background: #e8f5ee;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>Loan Application</h2>
+
+    <div class="info">
+      <p><strong>Member:</strong> <span id="memberName">---</span></p>
+      <p><strong>Phone:</strong> <span id="memberPhone">---</span></p>
+      <p><strong>Savings:</strong> UGX <span id="savings">0</span></p>
+    </div>
+
+    <label>Loan Amount (UGX)</label>
+    <input
+      type="number"
+      id="loanAmount"
+      placeholder="Enter amount"
+      min="1"
+    >
+
+    <label>Purpose of Loan</label>
+    <textarea
+      id="purpose"
+      placeholder="Explain what the loan will be used for"
+    ></textarea>
+
+    <label>Repayment Period (months)</label>
+    <input
+      type="number"
+      id="period"
+      placeholder="e.g. 3"
+      min="1"
+    >
+
+    <button onclick="applyForLoan()">
+      Submit Loan Application
+    </button>
+
+    <button class="back" onclick="goDashboard()">
+      Back to Dashboard
+    </button>
+
+    <p id="message"></p>
+
+  </div>
+
+</div>
+
+<script>
+
+  // Check whether member is logged in
+  const loggedIn = localStorage.getItem("tjkLoggedIn");
+  const currentMemberData =
+    localStorage.getItem("tjkCurrentMember");
+
+  if (loggedIn !== "true" || !currentMemberData) {
+    window.location.href = "./login.html";
+  }
+
+  const member = JSON.parse(currentMemberData);
+
+  // Display member details
+  document.getElementById("memberName").textContent =
+    member.name || member.fullName || "Member";
+
+  document.getElementById("memberPhone").textContent =
+    member.phone || "---";
+
+  document.getElementById("savings").textContent =
+    Number(member.savings || 0).toLocaleString();
+
+
+  function applyForLoan() {
+
+    const loanAmount =
+      Number(document.getElementById("loanAmount").value);
+
+    const purpose =
+      document.getElementById("purpose").value.trim();
+
+    const period =
+      Number(document.getElementById("period").value);
+
+    const message =
+      document.getElementById("message");
+
+
+    // Validation
+    if (!loanAmount || loanAmount <= 0) {
+      message.textContent =
+        "Please enter a valid loan amount.";
+      message.style.color = "red";
+      return;
+    }
+
+    if (!purpose) {
+      message.textContent =
+        "Please enter the purpose of the loan.";
+      message.style.color = "red";
+      return;
+    }
+
+    if (!period || period <= 0) {
+      message.textContent =
+        "Please enter a valid repayment period.";
+      message.style.color = "red";
+      return;
+    }
+
+
+    // Get existing applications
+    let applications =
+      JSON.parse(localStorage.getItem("tjkLoanApplications")) || [];
+
+
+    // Create application
+    const application = {
+      id: "LOAN-" + Date.now(),
+      phone: member.phone,
+      name: member.name || member.fullName || "Member",
+      amount: loanAmount,
+      purpose: purpose,
+      period: period,
+      status: "Pending",
+      date: new Date().toLocaleString()
+    };
+
+
+    applications.push(application);
+
+
+    // Save application
+    localStorage.setItem(
+      "tjkLoanApplications",
+      JSON.stringify(applications)
+    );
+
+
+    // Record transaction
+    let transactions =
+      JSON.parse(localStorage.getItem("tjkTransactions")) || [];
+
+    transactions.push({
+      phone: member.phone,
+      type: "Loan Application",
+      amount: loanAmount,
+      status: "Pending",
+      date: new Date().toLocaleString()
+    });
+
+    localStorage.setItem(
+      "tjkTransactions",
+      JSON.stringify(transactions)
+    );
+
+
+    // Success message
+    message.textContent =
+      "Loan application submitted successfully!";
+
+    message.style.color = "green";
+
+
+    // Clear form
+    document.getElementById("loanAmount").value = "";
+    document.getElementById("purpose").value = "";
+    document.getElementById("period").value = "";
+  }
+
+
+  function goDashboard() {
+    window.location.href = "./dashboard.html";
+  }
+
+</script>
+
+</body>
+</html>
