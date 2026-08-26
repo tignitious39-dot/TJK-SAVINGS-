@@ -3,25 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TJK Savings - Loan Application</title>
+  <title>TJK Savings - Loan Management</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f7f9;
-      margin: 0;
       color: #222;
+      font-size: 17px;
     }
 
     header {
       background: #0b5d3b;
       color: white;
       text-align: center;
-      padding: 20px;
+      padding: 25px 15px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header p {
+      font-size: 18px;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 700px;
       margin: 25px auto;
       padding: 15px;
     }
@@ -29,58 +43,123 @@
     .card {
       background: white;
       padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+    }
+
+    h2 {
+      color: #0b5d3b;
+      font-size: 25px;
+    }
+
+    h3 {
+      color: #0b5d3b;
     }
 
     label {
       display: block;
-      margin-top: 12px;
       font-weight: bold;
+      margin-top: 16px;
+      margin-bottom: 7px;
     }
 
-    input, textarea {
+    select,
+    input {
       width: 100%;
-      box-sizing: border-box;
-      padding: 13px;
-      margin: 7px 0 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
+      padding: 15px;
+      font-size: 17px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      background: white;
     }
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
+    .info {
+      background: #eaf6ef;
+      border-left: 5px solid #0b5d3b;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .warning {
+      background: #fff4d6;
+      border-left: 5px solid #d99b00;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+
+    .summary {
+      background: #f7faf8;
+      border: 1px solid #d5e5dc;
+      padding: 18px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .summary p {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      margin: 0;
+    }
+
+    .summary p:last-child {
+      border-bottom: none;
+      font-size: 20px;
+      font-weight: bold;
     }
 
     button {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
+      margin-top: 15px;
       border: none;
-      border-radius: 7px;
+      border-radius: 8px;
       background: #0b5d3b;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 8px;
+    }
+
+    button:hover {
+      opacity: 0.9;
     }
 
     .back {
       background: #555;
     }
 
+    .logout {
+      background: #b3261e;
+    }
+
     #message {
       text-align: center;
       font-weight: bold;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    .loan-box {
+      background: #f4f7f9;
+      padding: 15px;
+      border-radius: 8px;
       margin-top: 15px;
     }
 
-    .info {
-      background: #e8f5ee;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+    .loan-box strong {
+      color: #0b5d3b;
+    }
+
+    .legal {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -94,39 +173,187 @@
 
 <div class="container">
 
+  <!-- MEMBER INFORMATION -->
+
   <div class="card">
 
-    <h2>Loan Application</h2>
+    <h2>Loan Management</h2>
 
     <div class="info">
-      <p><strong>Member:</strong> <span id="memberName">---</span></p>
-      <p><strong>Phone:</strong> <span id="memberPhone">---</span></p>
-      <p><strong>Savings:</strong> UGX <span id="savings">0</span></p>
+
+      <p>
+        <strong>Member:</strong>
+        <span id="memberName">---</span>
+      </p>
+
+      <p>
+        <strong>Phone:</strong>
+        <span id="memberPhone">---</span>
+      </p>
+
+      <p>
+        <strong>Total Savings:</strong>
+        UGX <span id="savings">0</span>
+      </p>
+
+      <p>
+        <strong>Maximum Eligible Loan:</strong>
+        UGX <span id="maximumLoan">0</span>
+      </p>
+
     </div>
 
-    <label>Loan Amount (UGX)</label>
-    <input
-      type="number"
-      id="loanAmount"
-      placeholder="Enter amount"
-      min="1"
-    >
 
-    <label>Purpose of Loan</label>
-    <textarea
+    <!-- LOAN AMOUNT -->
+
+    <label for="loanAmount">
+      Select Loan Amount
+    </label>
+
+    <select id="loanAmount" onchange="calculateLoan()">
+
+      <option value="">
+        -- Select loan amount --
+      </option>
+
+      <option value="20000">
+        UGX 20,000
+      </option>
+
+      <option value="50000">
+        UGX 50,000
+      </option>
+
+      <option value="100000">
+        UGX 100,000
+      </option>
+
+      <option value="150000">
+        UGX 150,000
+      </option>
+
+      <option value="200000">
+        UGX 200,000
+      </option>
+
+    </select>
+
+
+    <!-- PERIOD -->
+
+    <label for="period">
+      Repayment Period
+    </label>
+
+    <select id="period" onchange="calculateLoan()">
+
+      <option value="">
+        -- Select period --
+      </option>
+
+      <option value="1">
+        1 Week
+      </option>
+
+      <option value="2">
+        2 Weeks
+      </option>
+
+      <option value="3">
+        3 Weeks
+      </option>
+
+      <option value="4">
+        4 Weeks (Maximum)
+      </option>
+
+    </select>
+
+
+    <!-- PURPOSE -->
+
+    <label for="purpose">
+      Purpose of Loan
+    </label>
+
+    <input
+      type="text"
       id="purpose"
-      placeholder="Explain what the loan will be used for"
-    ></textarea>
-
-    <label>Repayment Period (months)</label>
-    <input
-      type="number"
-      id="period"
-      placeholder="e.g. 3"
-      min="1"
+      placeholder="Enter purpose of the loan"
     >
 
-    <button onclick="applyForLoan()">
+
+    <!-- PAYMENT NUMBER -->
+
+    <label for="paymentNumber">
+      Payment / Mobile Money Number
+    </label>
+
+    <input
+      type="tel"
+      id="paymentNumber"
+      placeholder="07XXXXXXXX"
+    >
+
+    <div class="info">
+      The payment number must belong to the registered member.
+      Actual payment processing requires a properly connected
+      and authorized payment provider.
+    </div>
+
+
+    <!-- CALCULATION -->
+
+    <div class="summary">
+
+      <h3>Loan Cost Summary</h3>
+
+      <p>
+        <span>Principal</span>
+        <strong>
+          UGX <span id="principal">0</span>
+        </strong>
+      </p>
+
+      <p>
+        <span>Interest Rate</span>
+        <strong>
+          <span id="interestRate">0</span>%
+        </strong>
+      </p>
+
+      <p>
+        <span>Interest</span>
+        <strong>
+          UGX <span id="interest">0</span>
+        </strong>
+      </p>
+
+      <p>
+        <span>Account Opening Fee</span>
+        <strong>
+          UGX 2,500
+        </strong>
+      </p>
+
+      <p>
+        <span>Total Payable</span>
+        <strong>
+          UGX <span id="totalPayable">0</span>
+        </strong>
+      </p>
+
+    </div>
+
+
+    <div class="warning">
+      <strong>Loan eligibility rule:</strong><br>
+      The selected loan cannot exceed 200% of the member's
+      total savings.
+    </div>
+
+
+    <button onclick="submitLoan()">
       Submit Loan Application
     </button>
 
@@ -134,139 +361,709 @@
       Back to Dashboard
     </button>
 
+    <button class="logout" onclick="logout()">
+      Logout
+    </button>
+
     <p id="message"></p>
+
+  </div>
+
+
+  <!-- EXISTING APPLICATIONS -->
+
+  <div class="card">
+
+    <h2>My Loan Applications</h2>
+
+    <div id="loanList">
+      Loading...
+    </div>
+
+  </div>
+
+
+  <div class="card legal">
+
+    <strong>Important:</strong>
+
+    <p>
+      This website is currently a prototype. Loan approval,
+      disbursement and payment processing are not automatically
+      performed by this page.
+    </p>
+
+    <p>
+      Actual financial operations must use the appropriate
+      licensed structure, agreements, disclosures, records,
+      payment infrastructure and applicable regulatory
+      requirements.
+    </p>
 
   </div>
 
 </div>
 
+
 <script>
 
-  // Check whether member is logged in
-  const loggedIn = localStorage.getItem("tjkLoggedIn");
+  /* =========================================
+     LOGIN CHECK
+  ========================================= */
+
+  const loggedIn =
+    localStorage.getItem("tjkLoggedIn");
+
   const currentMemberData =
     localStorage.getItem("tjkCurrentMember");
 
-  if (loggedIn !== "true" || !currentMemberData) {
-    window.location.href = "./login.html";
+
+  if (
+    loggedIn !== "true" ||
+    !currentMemberData
+  ) {
+
+    window.location.href =
+      "./login.html";
+
   }
 
-  const member = JSON.parse(currentMemberData);
 
-  // Display member details
-  document.getElementById("memberName").textContent =
-    member.name || member.fullName || "Member";
+  /* =========================================
+     MEMBER
+  ========================================= */
 
-  document.getElementById("memberPhone").textContent =
-    member.phone || "---";
-
-  document.getElementById("savings").textContent =
-    Number(member.savings || 0).toLocaleString();
+  let member =
+    JSON.parse(currentMemberData);
 
 
-  function applyForLoan() {
+  let savings =
+    Number(member.savings || 0);
 
-    const loanAmount =
-      Number(document.getElementById("loanAmount").value);
 
-    const purpose =
-      document.getElementById("purpose").value.trim();
+  /* Maximum loan = 200% of savings */
 
-    const period =
-      Number(document.getElementById("period").value);
+  let maximumLoan =
+    savings * 2;
+
+
+  document.getElementById(
+    "memberName"
+  ).textContent =
+    member.name ||
+    member.fullName ||
+    "Member";
+
+
+  document.getElementById(
+    "memberPhone"
+  ).textContent =
+    member.phone ||
+    "---";
+
+
+  document.getElementById(
+    "savings"
+  ).textContent =
+    savings.toLocaleString();
+
+
+  document.getElementById(
+    "maximumLoan"
+  ).textContent =
+    maximumLoan.toLocaleString();
+
+
+  /* =========================================
+     PROTOTYPE LOAN RATES
+     
+     These are placeholders for development.
+     Replace only after TJK's approved pricing
+     and legal/regulatory review.
+  ========================================= */
+
+  const loanProducts = {
+
+    20000: {
+      interest: 5
+    },
+
+    50000: {
+      interest: 6
+    },
+
+    100000: {
+      interest: 7
+    },
+
+    150000: {
+      interest: 8
+    },
+
+    200000: {
+      interest: 10
+    }
+
+  };
+
+
+  /* =========================================
+     FORMAT MONEY
+  ========================================= */
+
+  function money(number) {
+
+    return Number(number || 0)
+      .toLocaleString();
+
+  }
+
+
+  /* =========================================
+     CALCULATE LOAN
+  ========================================= */
+
+  function calculateLoan() {
+
+    const amount =
+      Number(
+        document.getElementById(
+          "loanAmount"
+        ).value
+      );
+
+
+    if (!amount) {
+
+      document.getElementById(
+        "principal"
+      ).textContent = "0";
+
+      document.getElementById(
+        "interestRate"
+      ).textContent = "0";
+
+      document.getElementById(
+        "interest"
+      ).textContent = "0";
+
+      document.getElementById(
+        "totalPayable"
+      ).textContent = "0";
+
+      return;
+
+    }
+
+
+    const product =
+      loanProducts[amount];
+
+
+    if (!product) return;
+
+
+    const interest =
+      amount *
+      product.interest /
+      100;
+
+
+    const total =
+      amount +
+      interest +
+      2500;
+
+
+    document.getElementById(
+      "principal"
+    ).textContent =
+      money(amount);
+
+
+    document.getElementById(
+      "interestRate"
+    ).textContent =
+      product.interest;
+
+
+    document.getElementById(
+      "interest"
+    ).textContent =
+      money(interest);
+
+
+    document.getElementById(
+      "totalPayable"
+    ).textContent =
+      money(total);
+
+  }
+
+
+  /* =========================================
+     SUBMIT LOAN
+  ========================================= */
+
+  function submitLoan() {
 
     const message =
-      document.getElementById("message");
+      document.getElementById(
+        "message"
+      );
 
 
-    // Validation
-    if (!loanAmount || loanAmount <= 0) {
+    const amount =
+      Number(
+        document.getElementById(
+          "loanAmount"
+        ).value
+      );
+
+
+    const period =
+      Number(
+        document.getElementById(
+          "period"
+        ).value
+      );
+
+
+    const purpose =
+      document.getElementById(
+        "purpose"
+      ).value.trim();
+
+
+    const paymentNumber =
+      document.getElementById(
+        "paymentNumber"
+      ).value.trim();
+
+
+    /* Validate amount */
+
+    if (!amount) {
+
       message.textContent =
-        "Please enter a valid loan amount.";
+        "Please select a loan amount.";
+
       message.style.color = "red";
+
       return;
+
     }
+
+
+    /* Validate savings limit */
+
+    if (amount > maximumLoan) {
+
+      message.innerHTML =
+        "Loan rejected: the selected amount exceeds 200% of your savings.<br>" +
+        "Maximum eligible amount: UGX " +
+        money(maximumLoan);
+
+      message.style.color = "red";
+
+      return;
+
+    }
+
+
+    /* Validate period */
+
+    if (
+      !period ||
+      period < 1 ||
+      period > 4
+    ) {
+
+      message.textContent =
+        "Repayment period must be between 1 and 4 weeks.";
+
+      message.style.color = "red";
+
+      return;
+
+    }
+
+
+    /* Validate purpose */
 
     if (!purpose) {
+
       message.textContent =
         "Please enter the purpose of the loan.";
+
       message.style.color = "red";
+
       return;
+
     }
 
-    if (!period || period <= 0) {
+
+    /* Validate phone */
+
+    if (!paymentNumber) {
+
       message.textContent =
-        "Please enter a valid repayment period.";
+        "Please enter your payment number.";
+
       message.style.color = "red";
+
       return;
+
     }
 
 
-    // Get existing applications
+    /* Registered number check */
+
+    if (
+      paymentNumber !== member.phone
+    ) {
+
+      message.textContent =
+        "Payment number must match your registered phone number.";
+
+      message.style.color = "red";
+
+      return;
+
+    }
+
+
+    const product =
+      loanProducts[amount];
+
+
+    const interestRate =
+      product.interest;
+
+
+    const interest =
+      amount *
+      interestRate /
+      100;
+
+
+    const fee =
+      2500;
+
+
+    const totalPayable =
+      amount +
+      interest +
+      fee;
+
+
+    /* =========================================
+       CREATE APPLICATION
+    ========================================= */
+
     let applications =
-      JSON.parse(localStorage.getItem("tjkLoanApplications")) || [];
+      JSON.parse(
+        localStorage.getItem(
+          "tjkLoanApplications"
+        )
+      ) || [];
 
 
-    // Create application
     const application = {
-      id: "LOAN-" + Date.now(),
-      phone: member.phone,
-      name: member.name || member.fullName || "Member",
-      amount: loanAmount,
-      purpose: purpose,
-      period: period,
-      status: "Pending",
-      date: new Date().toLocaleString()
+
+      id:
+        "TJK-LOAN-" +
+        Date.now(),
+
+      phone:
+        member.phone,
+
+      name:
+        member.name ||
+        member.fullName ||
+        "Member",
+
+      amount:
+        amount,
+
+      period:
+        period,
+
+      periodUnit:
+        "weeks",
+
+      purpose:
+        purpose,
+
+      interestRate:
+        interestRate,
+
+      interest:
+        interest,
+
+      accountOpeningFee:
+        fee,
+
+      totalPayable:
+        totalPayable,
+
+      paymentNumber:
+        paymentNumber,
+
+      status:
+        "Pending",
+
+      date:
+        new Date().toLocaleString()
+
     };
 
 
-    applications.push(application);
-
-
-    // Save application
-    localStorage.setItem(
-      "tjkLoanApplications",
-      JSON.stringify(applications)
+    applications.push(
+      application
     );
 
 
-    // Record transaction
+    localStorage.setItem(
+      "tjkLoanApplications",
+      JSON.stringify(
+        applications
+      )
+    );
+
+
+    /* =========================================
+       TRANSACTION
+    ========================================= */
+
     let transactions =
-      JSON.parse(localStorage.getItem("tjkTransactions")) || [];
+      JSON.parse(
+        localStorage.getItem(
+          "tjkTransactions"
+        )
+      ) || [];
+
 
     transactions.push({
-      phone: member.phone,
-      type: "Loan Application",
-      amount: loanAmount,
-      status: "Pending",
-      date: new Date().toLocaleString()
+
+      id:
+        "TJK-TXN-" +
+        Date.now(),
+
+      phone:
+        member.phone,
+
+      type:
+        "Loan Application",
+
+      amount:
+        amount,
+
+      interest:
+        interest,
+
+      fee:
+        fee,
+
+      total:
+        totalPayable,
+
+      status:
+        "Pending",
+
+      date:
+        new Date().toLocaleString()
+
     });
+
 
     localStorage.setItem(
       "tjkTransactions",
-      JSON.stringify(transactions)
+      JSON.stringify(
+        transactions
+      )
     );
 
 
-    // Success message
-    message.textContent =
-      "Loan application submitted successfully!";
+    message.innerHTML =
+      "Loan application submitted successfully!<br>" +
+      "Application ID: " +
+      application.id +
+      "<br>Status: Pending";
 
-    message.style.color = "green";
+    message.style.color =
+      "green";
 
 
-    // Clear form
-    document.getElementById("loanAmount").value = "";
-    document.getElementById("purpose").value = "";
-    document.getElementById("period").value = "";
+    document.getElementById(
+      "loanAmount"
+    ).value = "";
+
+    document.getElementById(
+      "period"
+    ).value = "";
+
+    document.getElementById(
+      "purpose"
+    ).value = "";
+
+    document.getElementById(
+      "paymentNumber"
+    ).value = "";
+
+
+    calculateLoan();
+
+    loadApplications();
+
   }
 
+
+  /* =========================================
+     DISPLAY APPLICATIONS
+  ========================================= */
+
+  function loadApplications() {
+
+    const list =
+      document.getElementById(
+        "loanList"
+      );
+
+
+    const applications =
+      JSON.parse(
+        localStorage.getItem(
+          "tjkLoanApplications"
+        )
+      ) || [];
+
+
+    const mine =
+      applications.filter(
+        function(loan) {
+
+          return (
+            loan.phone ===
+            member.phone
+          );
+
+        }
+      );
+
+
+    if (mine.length === 0) {
+
+      list.innerHTML =
+        "<p>No loan applications yet.</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    mine
+      .slice()
+      .reverse()
+      .forEach(
+        function(loan) {
+
+          const box =
+            document.createElement(
+              "div"
+            );
+
+          box.className =
+            "loan-box";
+
+
+          box.innerHTML = `
+
+            <strong>Application ID:</strong>
+            ${loan.id}<br><br>
+
+            <strong>Loan Amount:</strong>
+            UGX ${money(loan.amount)}<br><br>
+
+            <strong>Period:</strong>
+            ${loan.period} week(s)<br><br>
+
+            <strong>Interest:</strong>
+            ${loan.interestRate}%<br><br>
+
+            <strong>Interest Amount:</strong>
+            UGX ${money(loan.interest)}<br><br>
+
+            <strong>Account Opening Fee:</strong>
+            UGX ${money(loan.accountOpeningFee)}<br><br>
+
+            <strong>Total Payable:</strong>
+            UGX ${money(loan.totalPayable)}<br><br>
+
+            <strong>Purpose:</strong>
+            ${loan.purpose}<br><br>
+
+            <strong>Status:</strong>
+            ${loan.status}<br><br>
+
+            <strong>Date:</strong>
+            ${loan.date}
+
+          `;
+
+
+          list.appendChild(
+            box
+          );
+
+        }
+      );
+
+  }
+
+
+  /* =========================================
+     NAVIGATION
+  ========================================= */
 
   function goDashboard() {
-    window.location.href = "./dashboard.html";
+
+    window.location.href =
+      "./dashboard.html";
+
   }
+
+
+  /* =========================================
+     LOGOUT
+  ========================================= */
+
+  function logout() {
+
+    localStorage.removeItem(
+      "tjkLoggedIn"
+    );
+
+    localStorage.removeItem(
+      "tjkCurrentMember"
+    );
+
+    window.location.href =
+      "./login.html";
+
+  }
+
+
+  /* =========================================
+     START
+  ========================================= */
+
+  loadApplications();
 
 </script>
 
 </body>
-</html>
+  </html>
