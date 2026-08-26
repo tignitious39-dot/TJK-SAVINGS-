@@ -1,0 +1,9 @@
+message.textContent = "Login successful!";
+message.style.color = "green";
+
+localStorage.setItem("tjkLoggedIn", "true");
+localStorage.setItem("tjkCurrentMember", JSON.stringify(member));
+
+setTimeout(function() {
+  window.location.href = "dashboard.html";
+}, 1000);
