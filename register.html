@@ -90,6 +90,7 @@
 </div>
 
 <script>
+<script>
 function registerMember() {
   const name = document.getElementById("fullName").value.trim();
   const phone = document.getElementById("phone").value.trim();
@@ -97,7 +98,7 @@ function registerMember() {
   const confirmPassword = document.getElementById("confirmPassword").value;
   const message = document.getElementById("message");
 
-  if (name === "" || phone === "" || password === "" || confirmPassword === "") {
+  if (!name || !phone || !password || !confirmPassword) {
     message.textContent = "Please fill in all fields.";
     message.style.color = "red";
     return;
@@ -115,10 +116,31 @@ function registerMember() {
     return;
   }
 
-  message.textContent = "Registration form completed successfully.";
+  const members = JSON.parse(localStorage.getItem("tjkMembers")) || [];
+
+  const existingMember = members.find(member => member.phone === phone);
+
+  if (existingMember) {
+    message.textContent = "This phone number is already registered.";
+    message.style.color = "red";
+    return;
+  }
+
+  members.push({
+    name: name,
+    phone: phone,
+    password: password
+  });
+
+  localStorage.setItem("tjkMembers", JSON.stringify(members));
+
+  message.textContent = "Registration successful! Redirecting to login...";
   message.style.color = "green";
+
+  setTimeout(function() {
+    window.location.href = "login.html";
+  }, 1500);
 }
-</script>
-  
+</script>  
 </body>
   </html>
