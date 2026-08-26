@@ -1,1 +1,124 @@
-https://github.com/tignitious39-dot/TJK-SAVINGS-/blob/7a4385ba1bca41a218d508a574e3b6e4090ecee6/index.html#L9
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Registration</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+    }
+
+    header {
+      background: #0b5d3b;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0 15px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #0b5d3b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Member Registration</h2>
+
+    <label>Full Name</label>
+    <input type="text" id="fullName" placeholder="Enter your full name">
+
+    <label>Phone Number</label>
+    <input type="tel" id="phone" placeholder="Enter phone number">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Create a password">
+
+    <label>Confirm Password</label>
+    <input type="password" id="confirmPassword" placeholder="Confirm password">
+
+    <button type="button" onclick="registerMember()">Register</button>
+
+    <p id="message"></p>
+  </div>
+</div>
+
+<script>
+function registerMember() {
+  const name = document.getElementById("fullName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const message = document.getElementById("message");
+
+  if (name === "" || phone === "" || password === "" || confirmPassword === "") {
+    message.textContent = "Please fill in all fields.";
+    message.style.color = "red";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    message.textContent = "Passwords do not match.";
+    message.style.color = "red";
+    return;
+  }
+
+  if (password.length < 6) {
+    message.textContent = "Password must be at least 6 characters.";
+    message.style.color = "red";
+    return;
+  }
+
+  message.textContent = "Registration form completed successfully.";
+  message.style.color = "green";
+}
+</script>
+
+</body>
+  </html>
