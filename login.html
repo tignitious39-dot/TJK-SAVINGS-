@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Login</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+    }
+
+    header {
+      background: #0b5d3b;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0 15px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #0b5d3b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Member Login</h2>
+
+    <label>Phone Number</label>
+    <input type="tel" id="phone" placeholder="Enter phone number">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+
+    <button type="button" onclick="loginMember()">Login</button>
+
+    <p id="message"></p>
+  </div>
+</div>
+
+<script>
+function loginMember() {
+  const phone = document.getElementById("phone").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("message");
+
+  const members = JSON.parse(localStorage.getItem("tjkMembers")) || [];
+
+  const member = members.find(
+    user => user.phone === phone && user.password === password
+  );
+
+  if (!member) {
+    message.textContent = "Incorrect phone number or password.";
+    message.style.color = "red";
+    return;
+  }
+
+  message.textContent = "Login successful!";
+  message.style.color = "green";
+
+  localStorage.setItem("tjkLoggedIn", "true");
+  localStorage.setItem("tjkCurrentMember", JSON.stringify(member));
+
+  setTimeout(function() {
+    window.location.href = "index.html";
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
