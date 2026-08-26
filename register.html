@@ -50,6 +50,7 @@
       border: none;
       border-radius: 6px;
       font-size: 16px;
+      cursor: pointer;
     }
 
     #message {
@@ -71,76 +72,115 @@
   <div class="card">
     <h2>Member Registration</h2>
 
-    <label>Full Name</label>
-    <input type="text" id="fullName" placeholder="Enter your full name">
+    <label for="fullName">Full Name</label>
+    <input
+      type="text"
+      id="fullName"
+      placeholder="Enter your full name"
+    >
 
-    <label>Phone Number</label>
-    <input type="tel" id="phone" placeholder="Enter phone number">
+    <label for="phone">Phone Number</label>
+    <input
+      type="tel"
+      id="phone"
+      placeholder="Enter phone number"
+    >
 
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Create a password">
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      placeholder="Create a password"
+    >
 
-    <label>Confirm Password</label>
-    <input type="password" id="confirmPassword" placeholder="Confirm password">
+    <label for="confirmPassword">Confirm Password</label>
+    <input
+      type="password"
+      id="confirmPassword"
+      placeholder="Confirm password"
+    >
 
-    <button type="button" onclick="registerMember()">Register</button>
+    <button type="button" onclick="registerMember()">
+      Register
+    </button>
 
     <p id="message"></p>
   </div>
 </div>
 
 <script>
-<script>
 function registerMember() {
+
   const name = document.getElementById("fullName").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const confirmPassword =
+    document.getElementById("confirmPassword").value;
+
   const message = document.getElementById("message");
 
-  if (!name || !phone || !password || !confirmPassword) {
+  if (name === "" || phone === "" ||
+      password === "" || confirmPassword === "") {
+
     message.textContent = "Please fill in all fields.";
     message.style.color = "red";
     return;
   }
 
   if (password !== confirmPassword) {
+
     message.textContent = "Passwords do not match.";
     message.style.color = "red";
     return;
   }
 
   if (password.length < 6) {
-    message.textContent = "Password must be at least 6 characters.";
+
+    message.textContent =
+      "Password must be at least 6 characters.";
+
     message.style.color = "red";
     return;
   }
 
-  const members = JSON.parse(localStorage.getItem("tjkMembers")) || [];
+  let members =
+    JSON.parse(localStorage.getItem("tjkMembers")) || [];
 
-  const existingMember = members.find(member => member.phone === phone);
+  const existingMember =
+    members.find(member => member.phone === phone);
 
   if (existingMember) {
-    message.textContent = "This phone number is already registered.";
+
+    message.textContent =
+      "This phone number is already registered.";
+
     message.style.color = "red";
     return;
   }
 
-  members.push({
+  const newMember = {
     name: name,
     phone: phone,
     password: password
-  });
+  };
 
-  localStorage.setItem("tjkMembers", JSON.stringify(members));
+  members.push(newMember);
 
-  message.textContent = "Registration successful! Redirecting to login...";
+  localStorage.setItem(
+    "tjkMembers",
+    JSON.stringify(members)
+  );
+
+  message.textContent =
+    "Registration successful! Redirecting to login...";
+
   message.style.color = "green";
 
   setTimeout(function() {
     window.location.href = "login.html";
   }, 1500);
 }
-</script>  
+</script>
+
 </body>
-  </html>
+</html>
