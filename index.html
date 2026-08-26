@@ -200,7 +200,7 @@
     <label>Password</label>
     <input type="password" placeholder="Enter your password">
 
-    <button>Login</button>
+    <button onclick="Loginmember()">login</button>
 
     <p style="margin-top:15px; font-size:13px;">
       Secure authentication will be added in the next stage.
@@ -214,6 +214,18 @@
   <p>© 2026 TJK Savings</p>
   <p>Your Financial Solutions</p>
 </footer>
+<script>
+function loginMember() {
+    const memberId = document.getElementById("memberId").value.trim();
+    const password = document.getElementById("password").value.trim();
 
+    if (memberId === "" || password === "") {
+        alert("Please enter your Member ID and Password.");
+        return;
+    }
+
+    alert("Login system is connected. Member authentication will be added in the next stage.");
+}
+</script>
 </body>
                    </html>
