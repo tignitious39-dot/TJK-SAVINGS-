@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Savings</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+      color: #222;
+    }
+
+    header {
+      background: #0b5d3b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin: 8px 0 18px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 7px;
+      background: #0b5d3b;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .back {
+      background: #555;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .balance {
+      background: #e8f5ee;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .balance strong {
+      font-size: 24px;
+      color: #0b5d3b;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>Make Savings</h2>
+
+    <div class="balance">
+      <p>Current Savings</p>
+      <strong>UGX <span id="currentSavings">0</span></strong>
+    </div>
+
+    <label>Amount to Save (UGX)</label>
+    <input
+      type="number"
+      id="amount"
+      placeholder="Enter amount"
+      min="1"
+    >
+
+    <button onclick="saveMoney()">
+      Save Money
+    </button>
+
+    <button class="back" onclick="goDashboard()">
+      Back to Dashboard
+    </button>
+
+    <p id="message"></p>
+
+  </div>
+
+</div>
+
+<script>
+
+  // Check login
+  const loggedIn = localStorage.getItem("tjkLoggedIn");
+  const currentMemberData =
+    localStorage.getItem("tjkCurrentMember");
+
+  if (loggedIn !== "true" || !currentMemberData) {
+    window.location.href = "./login.html";
+  }
+
+  let member = JSON.parse(currentMemberData);
+
+  // Current savings
+  let savings = Number(member.savings || 0);
+
+  document.getElementById("currentSavings").textContent =
+    savings.toLocaleString();
+
+
+  function saveMoney() {
+
+    const amountInput =
+      document.getElementById("amount");
+
+    const message =
+      document.getElementById("message");
+
+    const amount =
+      Number(amountInput.value);
+
+    if (!amount || amount <= 0) {
+      message.textContent =
+        "Please enter a valid savings amount.";
+
+      message.style.color = "red";
+      return;
+    }
+
+    // Add savings
+    savings += amount;
+
+    member.savings = savings;
+
+    // Update current member
+    localStorage.setItem(
+      "tjkCurrentMember",
+      JSON.stringify(member)
+    );
+
+    // Update member in members list
+    let members =
+      JSON.parse(localStorage.getItem("tjkMembers")) || [];
+
+    const index = members.findIndex(
+      user => user.phone === member.phone
+    );
+
+    if (index !== -1) {
+      members[index].savings = savings;
+
+      localStorage.setItem(
+        "tjkMembers",
+        JSON.stringify(members)
+      );
+    }
+
+    // Record transaction
+    let transactions =
+      JSON.parse(localStorage.getItem("tjkTransactions")) || [];
+
+    transactions.push({
+      phone: member.phone,
+      type: "Savings",
+      amount: amount,
+      date: new Date().toLocaleString()
+    });
+
+    localStorage.setItem(
+      "tjkTransactions",
+      JSON.stringify(transactions)
+    );
+
+    // Update screen
+    document.getElementById("currentSavings").textContent =
+      savings.toLocaleString();
+
+    amountInput.value = "";
+
+    message.textContent =
+      "Savings recorded successfully!";
+
+    message.style.color = "green";
+  }
+
+
+  function goDashboard() {
+    window.location.href = "./dashboard.html";
+  }
+
+</script>
+
+</body>
+  </html>
