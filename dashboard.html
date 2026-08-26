@@ -1,15 +1,674 @@
-<button onclick="window.location.href='./savings.html'">
-  💰 Make Savings
-</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Dashboard</title>
 
-<button onclick="window.location.href='./loans.html'">
-  💵 Apply for Loan
-</button>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<button onclick="showTransactions()">
-  📋 Transaction History
-</button>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      color: #222;
+      font-size: 18px;
+    }
 
-<button onclick="showLoans()">
-  📑 My Loan Applications
-</button>
+    header {
+      background: #0b5d3b;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    header h1 {
+      font-size: 34px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 19px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+    }
+
+    h2 {
+      color: #0b5d3b;
+      font-size: 27px;
+    }
+
+    .welcome {
+      border-left: 6px solid #0b5d3b;
+    }
+
+    .balances {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .balance {
+      background: white;
+      padding: 22px;
+      border-radius: 13px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .balance h3 {
+      color: #0b5d3b;
+      font-size: 20px;
+    }
+
+    .amount {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    button {
+      padding: 17px;
+      border: none;
+      border-radius: 8px;
+      background: #0b5d3b;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #b3261e;
+      font-size: 20px;
+    }
+
+    .loan {
+      background: #f4f8f5;
+      padding: 17px;
+      border-left: 5px solid #0b5d3b;
+      border-radius: 8px;
+      margin-bottom: 13px;
+      line-height: 1.6;
+    }
+
+    .transaction {
+      padding: 15px 5px;
+      border-bottom: 1px solid #ddd;
+      line-height: 1.6;
+    }
+
+    .empty {
+      color: #777;
+      text-align: center;
+      padding: 15px;
+    }
+
+    .status {
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      color: #666;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+
+  <!-- MEMBER -->
+
+  <div class="card welcome">
+
+    <h2>
+      Welcome,
+      <span id="memberName">Member</span>
+    </h2>
+
+    <p>
+      <strong>Phone:</strong>
+      <span id="memberPhone">---</span>
+    </p>
+
+    <p>
+      <strong>Member ID:</strong>
+      <span id="memberId">---</span>
+    </p>
+
+  </div>
+
+
+  <!-- BALANCES -->
+
+  <div class="balances">
+
+    <div class="balance">
+
+      <h3>Total Savings</h3>
+
+      <div class="amount">
+        UGX <span id="savings">0</span>
+      </div>
+
+    </div>
+
+
+    <div class="balance">
+
+      <h3>Loan Balance</h3>
+
+      <div class="amount">
+        UGX <span id="loanBalance">0</span>
+      </div>
+
+    </div>
+
+
+    <div class="balance">
+
+      <h3>Available Balance</h3>
+
+      <div class="amount">
+        UGX <span id="availableBalance">0</span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MAIN ACTIONS -->
+
+  <div class="card">
+
+    <h2>Member Services</h2>
+
+    <div class="actions">
+
+      <button onclick="openSavings()">
+        💰 Make Savings
+      </button>
+
+      <button onclick="openLoans()">
+        💵 Loan Management
+      </button>
+
+      <button onclick="showTransactions()">
+        📋 Transaction History
+      </button>
+
+      <button onclick="showLoans()">
+        📑 My Loans
+      </button>
+
+      <button class="logout" onclick="logout()">
+        🚪 LOGOUT
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- LOANS -->
+
+  <div class="card" id="loansSection">
+
+    <h2>📑 My Loan Applications</h2>
+
+    <div id="loanList">
+      Loading...
+    </div>
+
+  </div>
+
+
+  <!-- TRANSACTIONS -->
+
+  <div class="card" id="transactionsSection">
+
+    <h2>📋 Transaction History</h2>
+
+    <div id="transactionList">
+      Loading...
+    </div>
+
+  </div>
+
+</div>
+
+
+<footer>
+  TJK Savings — Your Financial Solutions
+</footer>
+
+
+<script>
+
+  /* LOGIN */
+
+  const loggedIn =
+    localStorage.getItem("tjkLoggedIn");
+
+  const currentData =
+    localStorage.getItem("tjkCurrentMember");
+
+
+  if (
+    loggedIn !== "true" ||
+    !currentData
+  ) {
+
+    window.location.href =
+      "./login.html";
+
+  }
+
+
+  let member =
+    JSON.parse(currentData);
+
+
+  /* MEMBER INFORMATION */
+
+  document.getElementById(
+    "memberName"
+  ).textContent =
+    member.name ||
+    member.fullName ||
+    "Member";
+
+
+  document.getElementById(
+    "memberPhone"
+  ).textContent =
+    member.phone || "---";
+
+
+  document.getElementById(
+    "memberId"
+  ).textContent =
+    member.memberId ||
+    member.id ||
+    "TJK-" + member.phone;
+
+
+  /* SAVINGS */
+
+  const savings =
+    Number(member.savings || 0);
+
+
+  document.getElementById(
+    "savings"
+  ).textContent =
+    savings.toLocaleString();
+
+
+  /* LOANS */
+
+  function getMyLoans() {
+
+    const all =
+      JSON.parse(
+        localStorage.getItem(
+          "tjkLoanApplications"
+        )
+      ) || [];
+
+
+    return all.filter(
+      function(loan) {
+
+        return loan.phone === member.phone;
+
+      }
+    );
+
+  }
+
+
+  const myLoans =
+    getMyLoans();
+
+
+  let loanBalance = 0;
+
+
+  myLoans.forEach(
+    function(loan) {
+
+      if (
+        loan.status === "Approved" ||
+        loan.status === "Active"
+      ) {
+
+        loanBalance +=
+          Number(loan.amount || 0);
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    "loanBalance"
+  ).textContent =
+    loanBalance.toLocaleString();
+
+
+  document.getElementById(
+    "availableBalance"
+  ).textContent =
+    Math.max(
+      0,
+      savings - loanBalance
+    ).toLocaleString();
+
+
+  /* DISPLAY LOANS */
+
+  function displayLoans() {
+
+    const list =
+      document.getElementById(
+        "loanList"
+      );
+
+
+    const loans =
+      getMyLoans();
+
+
+    if (loans.length === 0) {
+
+      list.innerHTML =
+        '<p class="empty">No loan applications yet.</p>';
+
+      return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    loans
+      .slice()
+      .reverse()
+      .forEach(
+        function(loan) {
+
+          const box =
+            document.createElement(
+              "div"
+            );
+
+
+          box.className =
+            "loan";
+
+
+          box.innerHTML = `
+
+            <strong>Application ID:</strong>
+            ${loan.id || "---"}<br>
+
+            <strong>Amount:</strong>
+            UGX ${Number(
+              loan.amount || 0
+            ).toLocaleString()}<br>
+
+            <strong>Period:</strong>
+            ${loan.period || "---"}
+            ${loan.periodUnit || "weeks"}<br>
+
+            <strong>Interest:</strong>
+            ${loan.interestRate || 0}%<br>
+
+            <strong>Total Payable:</strong>
+            UGX ${Number(
+              loan.totalPayable || 0
+            ).toLocaleString()}<br>
+
+            <strong>Status:</strong>
+            <span class="status">
+              ${loan.status || "Pending"}
+            </span><br>
+
+            <strong>Date:</strong>
+            ${loan.date || "---"}
+
+          `;
+
+
+          list.appendChild(box);
+
+        }
+      );
+
+  }
+
+
+  /* TRANSACTIONS */
+
+  function displayTransactions() {
+
+    const list =
+      document.getElementById(
+        "transactionList"
+      );
+
+
+    const all =
+      JSON.parse(
+        localStorage.getItem(
+          "tjkTransactions"
+        )
+      ) || [];
+
+
+    const mine =
+      all.filter(
+        function(transaction) {
+
+          return (
+            transaction.phone ===
+            member.phone
+          );
+
+        }
+      );
+
+
+    if (mine.length === 0) {
+
+      list.innerHTML =
+        '<p class="empty">No transactions recorded yet.</p>';
+
+      return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    mine
+      .slice()
+      .reverse()
+      .forEach(
+        function(transaction) {
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "transaction";
+
+
+          item.innerHTML = `
+
+            <strong>
+              ${transaction.type || "Transaction"}
+            </strong><br>
+
+            Amount:
+            UGX ${Number(
+              transaction.amount || 0
+            ).toLocaleString()}<br>
+
+            ${
+              transaction.interest
+                ? "Interest: UGX " +
+                  Number(
+                    transaction.interest
+                  ).toLocaleString() +
+                  "<br>"
+                : ""
+            }
+
+            ${
+              transaction.fee
+                ? "Fee: UGX " +
+                  Number(
+                    transaction.fee
+                  ).toLocaleString() +
+                  "<br>"
+                : ""
+            }
+
+            ${
+              transaction.total
+                ? "Total: UGX " +
+                  Number(
+                    transaction.total
+                  ).toLocaleString() +
+                  "<br>"
+                : ""
+            }
+
+            ${
+              transaction.status
+                ? "Status: " +
+                  transaction.status +
+                  "<br>"
+                : ""
+            }
+
+            Date:
+            ${transaction.date || "---"}
+
+          `;
+
+
+          list.appendChild(item);
+
+        }
+      );
+
+  }
+
+
+  /* BUTTONS */
+
+  function openSavings() {
+
+    window.location.href =
+      "./savings.html";
+
+  }
+
+
+  function openLoans() {
+
+    window.location.href =
+      "./loans.html";
+
+  }
+
+
+  function showTransactions() {
+
+    document.getElementById(
+      "transactionsSection"
+    ).scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+
+  function showLoans() {
+
+    document.getElementById(
+      "loansSection"
+    ).scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* LOGOUT */
+
+  function logout() {
+
+    localStorage.removeItem(
+      "tjkLoggedIn"
+    );
+
+    localStorage.removeItem(
+      "tjkCurrentMember"
+    );
+
+    window.location.href =
+      "./login.html";
+
+  }
+
+
+  /* LOAD */
+
+  displayLoans();
+
+  displayTransactions();
+
+</script>
+
+</body>
+</html>
