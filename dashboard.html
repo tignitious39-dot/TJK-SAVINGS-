@@ -1,9 +1,202 @@
-message.textContent = "Login successful!";
-message.style.color = "green";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TJK Savings - Dashboard</title>
 
-localStorage.setItem("tjkLoggedIn", "true");
-localStorage.setItem("tjkCurrentMember", JSON.stringify(member));
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+      color: #222;
+    }
 
-setTimeout(function() {
-  window.location.href = "dashboard.html";
-}, 1000);
+    header {
+      background: #0b5d3b;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+    .welcome {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      color: #0b5d3b;
+      margin-top: 0;
+    }
+
+    .amount {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .actions {
+      margin-top: 25px;
+      display: grid;
+      gap: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 7px;
+      background: #0b5d3b;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #b3261e;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TJK Savings</h1>
+  <p>Your Financial Solutions</p>
+</header>
+
+<div class="container">
+
+  <div class="welcome">
+    <h2>Welcome, <span id="memberName">Member</span>!</h2>
+    <p>Phone: <span id="memberPhone">---</span></p>
+    <p>Member ID: <span id="memberId">---</span></p>
+  </div>
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>Total Savings</h3>
+      <p class="amount">UGX <span id="savings">0</span></p>
+    </div>
+
+    <div class="card">
+      <h3>Loan Balance</h3>
+      <p class="amount">UGX <span id="loanBalance">0</span></p>
+    </div>
+
+    <div class="card">
+      <h3>Available Balance</h3>
+      <p class="amount">UGX <span id="availableBalance">0</span></p>
+    </div>
+
+  </div>
+
+  <div class="actions">
+
+    <button onclick="alert('Savings feature coming soon.')">
+      💰 Make Savings
+    </button>
+
+    <button onclick="alert('Loan application feature coming soon.')">
+      💵 Apply for Loan
+    </button>
+
+    <button onclick="alert('Transaction history feature coming soon.')">
+      📋 Transaction History
+    </button>
+
+    <button class="logout" onclick="logout()">
+      🚪 Logout
+    </button>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>TJK Savings — Your Financial Solutions</p>
+</footer>
+
+<script>
+
+  // Check whether member is logged in
+  const loggedIn = localStorage.getItem("tjkLoggedIn");
+  const currentMember = localStorage.getItem("tjkCurrentMember");
+
+  if (loggedIn !== "true" || !currentMember) {
+    window.location.href = "./login.html";
+  }
+
+  const member = JSON.parse(currentMember);
+
+  // Display member information
+  document.getElementById("memberName").textContent =
+    member.name || member.fullName || "Member";
+
+  document.getElementById("memberPhone").textContent =
+    member.phone || "---";
+
+  document.getElementById("memberId").textContent =
+    member.memberId || member.id || "TJK-" + member.phone;
+
+  // Display financial information
+  document.getElementById("savings").textContent =
+    Number(member.savings || 0).toLocaleString();
+
+  document.getElementById("loanBalance").textContent =
+    Number(member.loanBalance || 0).toLocaleString();
+
+  const savings = Number(member.savings || 0);
+  const loanBalance = Number(member.loanBalance || 0);
+
+  document.getElementById("availableBalance").textContent =
+    Math.max(0, savings - loanBalance).toLocaleString();
+
+
+  // Logout
+  function logout() {
+
+    localStorage.removeItem("tjkLoggedIn");
+    localStorage.removeItem("tjkCurrentMember");
+
+    window.location.href = "./login.html";
+  }
+
+</script>
+
+</body>
+</html>
