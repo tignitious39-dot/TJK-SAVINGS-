@@ -16,8 +16,8 @@
     header {
       background: #0b5d3b;
       color: white;
-      padding: 20px;
       text-align: center;
+      padding: 22px 15px;
     }
 
     header h1 {
@@ -25,46 +25,54 @@
     }
 
     .container {
-      max-width: 900px;
-      margin: 25px auto;
+      max-width: 950px;
+      margin: 20px auto;
       padding: 15px;
     }
 
-    .welcome {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
+    .welcome,
     .card {
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
     }
 
-    .card h3 {
+    .welcome h2 {
+      color: #0b5d3b;
+      margin-top: 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .balance-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .balance-card h3 {
       color: #0b5d3b;
       margin-top: 0;
     }
 
     .amount {
-      font-size: 24px;
+      font-size: 23px;
       font-weight: bold;
     }
 
     .actions {
-      margin-top: 25px;
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
+      margin-bottom: 20px;
     }
 
     button {
@@ -78,15 +86,51 @@
       cursor: pointer;
     }
 
+    button:hover {
+      opacity: 0.9;
+    }
+
     .logout {
       background: #b3261e;
     }
 
+    .loan {
+      border-left: 5px solid #0b5d3b;
+      padding: 15px;
+      margin-bottom: 12px;
+      background: #f7faf8;
+      border-radius: 7px;
+    }
+
+    .transaction {
+      padding: 13px 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .transaction:last-child {
+      border-bottom: none;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #b06a00;
+      font-weight: bold;
+    }
+
+    .empty {
+      color: #777;
+      text-align: center;
+      padding: 15px;
+    }
+
     footer {
       text-align: center;
-      margin-top: 30px;
-      padding: 20px;
       color: #666;
+      padding: 20px;
     }
   </style>
 </head>
@@ -100,43 +144,58 @@
 
 <div class="container">
 
+  <!-- MEMBER INFORMATION -->
   <div class="welcome">
     <h2>Welcome, <span id="memberName">Member</span>!</h2>
-    <p>Phone: <span id="memberPhone">---</span></p>
-    <p>Member ID: <span id="memberId">---</span></p>
+    <p><strong>Phone:</strong> <span id="memberPhone">---</span></p>
+    <p><strong>Member ID:</strong> <span id="memberId">---</span></p>
   </div>
 
+
+  <!-- FINANCIAL SUMMARY -->
   <div class="cards">
 
-    <div class="card">
+    <div class="balance-card">
       <h3>Total Savings</h3>
-      <p class="amount">UGX <span id="savings">0</span></p>
+      <p class="amount">
+        UGX <span id="savings">0</span>
+      </p>
     </div>
 
-    <div class="card">
+    <div class="balance-card">
       <h3>Loan Balance</h3>
-      <p class="amount">UGX <span id="loanBalance">0</span></p>
+      <p class="amount">
+        UGX <span id="loanBalance">0</span>
+      </p>
     </div>
 
-    <div class="card">
+    <div class="balance-card">
       <h3>Available Balance</h3>
-      <p class="amount">UGX <span id="availableBalance">0</span></p>
+      <p class="amount">
+        UGX <span id="availableBalance">0</span>
+      </p>
     </div>
 
   </div>
 
+
+  <!-- ACTIONS -->
   <div class="actions">
 
+    <button onclick="window.location.href='./savings.html'">
+      💰 Make Savings
+    </button>
+
     <button onclick="window.location.href='./loans.html'">
-  💵 Apply for Loan
-    </button>
-    </button>
-    <button onclick="alert('Loan application feature coming soon.')">
       💵 Apply for Loan
     </button>
 
-    <button onclick="alert('Transaction history feature coming soon.')">
+    <button onclick="showTransactions()">
       📋 Transaction History
+    </button>
+
+    <button onclick="showLoans()">
+      📑 My Loan Applications
     </button>
 
     <button class="logout" onclick="logout()">
@@ -145,56 +204,341 @@
 
   </div>
 
+
+  <!-- LOAN APPLICATIONS -->
+  <div class="card" id="loanSection">
+
+    <h2>📑 My Loan Applications</h2>
+
+    <div id="loanList">
+      <p class="empty">Loading loan applications...</p>
+    </div>
+
+  </div>
+
+
+  <!-- TRANSACTIONS -->
+  <div class="card" id="transactionSection">
+
+    <h2>📋 Transaction History</h2>
+
+    <div id="transactionList">
+      <p class="empty">Loading transactions...</p>
+    </div>
+
+  </div>
+
 </div>
+
 
 <footer>
   <p>TJK Savings — Your Financial Solutions</p>
 </footer>
 
+
 <script>
 
-  // Check whether member is logged in
-  const loggedIn = localStorage.getItem("tjkLoggedIn");
-  const currentMember = localStorage.getItem("tjkCurrentMember");
+  /* =========================================
+     CHECK LOGIN
+  ========================================= */
 
-  if (loggedIn !== "true" || !currentMember) {
+  const loggedIn =
+    localStorage.getItem("tjkLoggedIn");
+
+  const currentMemberData =
+    localStorage.getItem("tjkCurrentMember");
+
+  if (loggedIn !== "true" || !currentMemberData) {
+
     window.location.href = "./login.html";
+
   }
 
-  const member = JSON.parse(currentMember);
 
-  // Display member information
+  /* =========================================
+     CURRENT MEMBER
+  ========================================= */
+
+  let member =
+    JSON.parse(currentMemberData);
+
+
+  /* =========================================
+     MEMBER INFORMATION
+  ========================================= */
+
   document.getElementById("memberName").textContent =
-    member.name || member.fullName || "Member";
+    member.name ||
+    member.fullName ||
+    "Member";
 
   document.getElementById("memberPhone").textContent =
-    member.phone || "---";
+    member.phone ||
+    "---";
 
   document.getElementById("memberId").textContent =
-    member.memberId || member.id || "TJK-" + member.phone;
+    member.memberId ||
+    member.id ||
+    "TJK-" + member.phone;
 
-  // Display financial information
+
+  /* =========================================
+     SAVINGS
+  ========================================= */
+
+  let savings =
+    Number(member.savings || 0);
+
+
+  /* =========================================
+     LOAN APPLICATIONS
+  ========================================= */
+
+  let allLoans =
+    JSON.parse(
+      localStorage.getItem("tjkLoanApplications")
+    ) || [];
+
+
+  let memberLoans =
+    allLoans.filter(function(loan) {
+
+      return loan.phone === member.phone;
+
+    });
+
+
+  /* =========================================
+     CALCULATE LOAN BALANCE
+  ========================================= */
+
+  let loanBalance = 0;
+
+  memberLoans.forEach(function(loan) {
+
+    if (
+      loan.status === "Approved" ||
+      loan.status === "Active"
+    ) {
+
+      loanBalance += Number(loan.amount || 0);
+
+    }
+
+  });
+
+
+  /* =========================================
+     DISPLAY BALANCES
+  ========================================= */
+
   document.getElementById("savings").textContent =
-    Number(member.savings || 0).toLocaleString();
+    savings.toLocaleString();
 
   document.getElementById("loanBalance").textContent =
-    Number(member.loanBalance || 0).toLocaleString();
-
-  const savings = Number(member.savings || 0);
-  const loanBalance = Number(member.loanBalance || 0);
+    loanBalance.toLocaleString();
 
   document.getElementById("availableBalance").textContent =
-    Math.max(0, savings - loanBalance).toLocaleString();
+    Math.max(
+      0,
+      savings - loanBalance
+    ).toLocaleString();
 
 
-  // Logout
+  /* =========================================
+     DISPLAY LOAN APPLICATIONS
+  ========================================= */
+
+  function displayLoans() {
+
+    const loanList =
+      document.getElementById("loanList");
+
+    if (memberLoans.length === 0) {
+
+      loanList.innerHTML =
+        '<p class="empty">No loan applications found.</p>';
+
+      return;
+
+    }
+
+
+    loanList.innerHTML = "";
+
+
+    memberLoans
+      .slice()
+      .reverse()
+      .forEach(function(loan) {
+
+        const div =
+          document.createElement("div");
+
+        div.className = "loan";
+
+        let statusClass =
+          loan.status === "Pending"
+            ? "pending"
+            : "success";
+
+        div.innerHTML = `
+          <strong>Loan ID:</strong>
+          ${loan.id || "---"}<br><br>
+
+          <strong>Amount:</strong>
+          UGX ${Number(loan.amount || 0).toLocaleString()}<br><br>
+
+          <strong>Purpose:</strong>
+          ${loan.purpose || "---"}<br><br>
+
+          <strong>Repayment Period:</strong>
+          ${loan.period || "---"} month(s)<br><br>
+
+          <strong>Status:</strong>
+          <span class="${statusClass}">
+            ${loan.status || "Pending"}
+          </span><br><br>
+
+          <strong>Date:</strong>
+          ${loan.date || "---"}
+        `;
+
+        loanList.appendChild(div);
+
+      });
+
+  }
+
+
+  /* =========================================
+     TRANSACTION HISTORY
+  ========================================= */
+
+  function displayTransactions() {
+
+    const transactionList =
+      document.getElementById("transactionList");
+
+    let allTransactions =
+      JSON.parse(
+        localStorage.getItem("tjkTransactions")
+      ) || [];
+
+
+    let memberTransactions =
+      allTransactions.filter(function(transaction) {
+
+        return transaction.phone === member.phone;
+
+      });
+
+
+    if (memberTransactions.length === 0) {
+
+      transactionList.innerHTML =
+        '<p class="empty">No transactions found.</p>';
+
+      return;
+
+    }
+
+
+    transactionList.innerHTML = "";
+
+
+    memberTransactions
+      .slice()
+      .reverse()
+      .forEach(function(transaction) {
+
+        const div =
+          document.createElement("div");
+
+        div.className = "transaction";
+
+        let amount =
+          Number(transaction.amount || 0)
+            .toLocaleString();
+
+        div.innerHTML = `
+          <strong>${transaction.type || "Transaction"}</strong><br>
+
+          Amount:
+          UGX ${amount}<br>
+
+          ${transaction.status
+            ? "Status: " + transaction.status + "<br>"
+            : ""}
+
+          Date:
+          ${transaction.date || "---"}
+        `;
+
+        transactionList.appendChild(div);
+
+      });
+
+  }
+
+
+  /* =========================================
+     SHOW TRANSACTIONS
+  ========================================= */
+
+  function showTransactions() {
+
+    document.getElementById(
+      "transactionSection"
+    ).scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* =========================================
+     SHOW LOANS
+  ========================================= */
+
+  function showLoans() {
+
+    document.getElementById(
+      "loanSection"
+    ).scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* =========================================
+     LOGOUT
+  ========================================= */
+
   function logout() {
 
-    localStorage.removeItem("tjkLoggedIn");
-    localStorage.removeItem("tjkCurrentMember");
+    localStorage.removeItem(
+      "tjkLoggedIn"
+    );
 
-    window.location.href = "./login.html";
+    localStorage.removeItem(
+      "tjkCurrentMember"
+    );
+
+    window.location.href =
+      "./login.html";
+
   }
+
+
+  /* =========================================
+     INITIAL LOAD
+  ========================================= */
+
+  displayLoans();
+
+  displayTransactions();
 
 </script>
 
